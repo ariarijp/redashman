@@ -36,10 +36,7 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checkError(err)
 
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".redashman")

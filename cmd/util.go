@@ -7,38 +7,41 @@ import (
 	"github.com/bitly/go-simplejson"
 )
 
-func getUrlFlag() string {
+func getUrlFlag() (*string, error) {
 	flag, err := queryCmd.PersistentFlags().GetString("url")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return nil, err
 	}
 
-	return string(flag)
+	url := string(flag)
+	return &url, nil
 }
 
-func getApiKeyFlag() string {
+func getApiKeyFlag() (*string, error) {
 	flag, err := queryCmd.PersistentFlags().GetString("api-key")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return nil, err
 	}
 
-	return string(flag)
+	apiKey := string(flag)
+	return &apiKey, nil
 }
 
-func getQueryFromResponseBody(body string) string {
+func getQueryFromResponseBody(body string) (*string, error) {
 	js, err := simplejson.NewJson([]byte(body))
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	query, err := js.Get("query").String()
+	checkError(err)
+
+	return &query, nil
+}
+
+func checkError(err error) {
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	return query
 }

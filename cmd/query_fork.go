@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"strconv"
 
 	"github.com/ariarijp/redashman/redash"
@@ -15,23 +14,19 @@ var queryForkCmd = &cobra.Command{
 	Short: "Fork a query from an existing one",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		redashUrl := getUrlFlag()
-		apiKey := getApiKeyFlag()
+		redashUrl, err := getUrlFlag()
+		checkError(err)
+		apiKey, err := getApiKeyFlag()
+		checkError(err)
 
 		id, err := strconv.Atoi(args[0])
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checkError(err)
 
 		queryStrings := url.Values{}
-		queryStrings.Set("api_key", apiKey)
+		queryStrings.Set("api_key", *apiKey)
 
-		res, err := redash.ForkQuery(redashUrl, id, queryStrings)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		res, err := redash.ForkQuery(*redashUrl, id, queryStrings)
+		checkError(err)
 
 		fmt.Println(res.Status)
 	},

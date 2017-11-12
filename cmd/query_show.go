@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 
@@ -16,43 +15,34 @@ var queryShowCmd = &cobra.Command{
 	Short: "Show a query",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		redashUrl := getUrlFlag()
-		apiKey := getApiKeyFlag()
+		redashUrl, err := getUrlFlag()
+		checkError(err)
+		apiKey, err := getApiKeyFlag()
+		checkError(err)
 
 		id, err := strconv.Atoi(args[0])
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checkError(err)
 
 		queryStrings := url.Values{}
-		queryStrings.Set("api_key", apiKey)
+		queryStrings.Set("api_key", *apiKey)
 
-		res, err := redash.GetQuery(redashUrl, id, queryStrings)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		res, err := redash.GetQuery(*redashUrl, id, queryStrings)
+		checkError(err)
 
 		body, err := res.Body.ToString()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checkError(err)
 
 		flagJson, err := cmd.Flags().GetBool("json")
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checkError(err)
 		if flagJson {
 			fmt.Println(body)
 			return
 		}
 
-		query := getQueryFromResponseBody(body)
+		query, err := getQueryFromResponseBody(body)
+		checkError(err)
 
-		fmt.Println(strings.TrimSpace(query))
+		fmt.Println(strings.TrimSpace(*query))
 	},
 }
 

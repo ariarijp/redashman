@@ -14,21 +14,19 @@ var queryArchiveCmd = &cobra.Command{
 	Short: "Archive a query",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		redashUrl := getUrlFlag()
-		apiKey := getApiKeyFlag()
+		redashUrl, err := getUrlFlag()
+		checkError(err)
+		apiKey, err := getApiKeyFlag()
+		checkError(err)
 
 		id, err := strconv.Atoi(args[0])
-		if err != nil {
-			panic(err)
-		}
+		checkError(err)
 
 		queryStrings := url.Values{}
-		queryStrings.Set("api_key", apiKey)
+		queryStrings.Set("api_key", *apiKey)
 
-		res, err := redash.ArchiveQuery(redashUrl, id, queryStrings)
-		if err != nil {
-			panic(err)
-		}
+		res, err := redash.ArchiveQuery(*redashUrl, id, queryStrings)
+		checkError(err)
 
 		fmt.Println(res.Status)
 	},

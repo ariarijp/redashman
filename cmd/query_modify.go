@@ -19,70 +19,63 @@ var queryModifyCmd = &cobra.Command{
 	Short: "Modify a query with text from STDIN",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		redashUrl := getUrlFlag()
-		apiKey := getApiKeyFlag()
+		redashUrl, err := getUrlFlag()
+		checkError(err)
+		apiKey, err := getApiKeyFlag()
+		checkError(err)
 		backupDir, err := cmd.Flags().GetString("backup-dir")
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checkError(err)
 
 		query, err := ioutil.ReadAll(os.Stdin)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checkError(err)
 
 		id, err := strconv.Atoi(args[0])
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checkError(err)
 
 		queryStrings := url.Values{}
-		queryStrings.Set("api_key", apiKey)
+		queryStrings.Set("api_key", *apiKey)
 
 		if backupDir != "" {
-			makeBackupFile(redashUrl, id, queryStrings, backupDir)
+			err = makeBackupFile(*redashUrl, id, queryStrings, backupDir)
+			checkError(err)
 		}
 
 		json := simplejson.New()
 		json.Set("query", string(query))
 
-		res, err := redash.ModifyQuery(redashUrl, id, queryStrings, json)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		res, err := redash.ModifyQuery(*redashUrl, id, queryStrings, json)
+		checkError(err)
 
 		fmt.Println(res.Status)
 	},
 }
 
-func makeBackupFile(redashUrl string, id int, queryStrings url.Values, backupDir string) {
+func makeBackupFile(redashUrl string, id int, queryStrings url.Values, backupDir string) error {
 	res, err := redash.GetQuery(redashUrl, id, queryStrings)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	body, err := res.Body.ToString()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
-	query := getQueryFromResponseBody(body)
+	query, err := getQueryFromResponseBody(body)
+	if err != nil {
+		return err
+	}
 
 	now := time.Now()
 	backupFileName := fmt.Sprintf("query_%d_%s.sql", id, now.Format("20060102150405"))
 	backupFilePath := path.Join(backupDir, backupFileName)
 
-	err = ioutil.WriteFile(backupFilePath, []byte(query), 0644)
+	err = ioutil.WriteFile(backupFilePath, []byte(*query), 0644)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
+
+	return nil
 }
 
 func init() {
