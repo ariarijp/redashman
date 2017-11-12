@@ -49,7 +49,7 @@ var queryCreateCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		println(res.Status)
+		fmt.Println(res.Status)
 	},
 }
 

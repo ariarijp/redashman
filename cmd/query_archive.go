@@ -34,7 +34,7 @@ var queryArchiveCmd = &cobra.Command{
 			panic(err)
 		}
 
-		println(res.Status)
+		fmt.Println(res.Status)
 	},
 }
 

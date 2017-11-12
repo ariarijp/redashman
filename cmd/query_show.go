@@ -63,7 +63,7 @@ var queryShowCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		println(strings.TrimSpace(query))
+		fmt.Println(strings.TrimSpace(query))
 	},
 }
 
