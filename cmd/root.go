@@ -24,10 +24,10 @@ func Execute() {
 }
 
 func init() {
-	queryCmd.PersistentFlags().String("api-key", "", "A help for foo")
-	queryCmd.PersistentFlags().String("url", "", "URL")
-	queryCmd.MarkPersistentFlagRequired("api-key")
-	queryCmd.MarkPersistentFlagRequired("url")
+	RootCmd.PersistentFlags().String("api-key", "", "A help for foo")
+	RootCmd.PersistentFlags().String("url", "", "URL")
+	RootCmd.MarkPersistentFlagRequired("api-key")
+	RootCmd.MarkPersistentFlagRequired("url")
 	cobra.OnInitialize(initConfig)
 }
 

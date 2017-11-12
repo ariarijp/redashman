@@ -9,7 +9,7 @@ import (
 )
 
 func getUrlFlag() (*string, error) {
-	flag, err := queryCmd.PersistentFlags().GetString("url")
+	flag, err := RootCmd.PersistentFlags().GetString("url")
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func getUrlFlag() (*string, error) {
 }
 
 func getApiKeyFlag() (*string, error) {
-	flag, err := queryCmd.PersistentFlags().GetString("api-key")
+	flag, err := RootCmd.PersistentFlags().GetString("api-key")
 	if err != nil {
 		return nil, err
 	}
