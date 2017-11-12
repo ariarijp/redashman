@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bitly/go-simplejson"
 	"github.com/franela/goreq"
 	"github.com/spf13/cobra"
 )
@@ -51,17 +50,7 @@ var queryShowCmd = &cobra.Command{
 			return
 		}
 
-		js, err := simplejson.NewJson([]byte(body))
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		query, err := js.Get("query").String()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		query := getQueryFromResponseBody(body)
 
 		fmt.Println(strings.TrimSpace(query))
 	},

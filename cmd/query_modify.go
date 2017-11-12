@@ -5,7 +5,9 @@ import (
 	"io/ioutil"
 	"net/url"
 	"os"
+	"path"
 	"strconv"
+	"time"
 
 	"github.com/bitly/go-simplejson"
 	"github.com/franela/goreq"
@@ -19,6 +21,11 @@ var queryModifyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl := getUrlFlag()
 		apiKey := getApiKeyFlag()
+		backupDir, err := cmd.Flags().GetString("backup-dir")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
 		values := url.Values{}
 		values.Set("api_key", apiKey)
@@ -33,6 +40,10 @@ var queryModifyCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
+		}
+
+		if backupDir != "" {
+			makeBackupFile(redashUrl, id, values, backupDir)
 		}
 
 		js := simplejson.New()
@@ -59,6 +70,37 @@ var queryModifyCmd = &cobra.Command{
 	},
 }
 
+func makeBackupFile(redashUrl string, id int, values url.Values, backupDir string) {
+	res, err := goreq.Request{
+		Method:      "GET",
+		Uri:         fmt.Sprintf("%s/api/queries/%d", redashUrl, id),
+		QueryString: values,
+	}.Do()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	body, err := res.Body.ToString()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	query := getQueryFromResponseBody(body)
+
+	now := time.Now()
+	backupFileName := fmt.Sprintf("query_%d_%s.sql", id, now.Format("20060102150405"))
+	backupFilePath := path.Join(backupDir, backupFileName)
+
+	err = ioutil.WriteFile(backupFilePath, []byte(query), 0644)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
 func init() {
+	queryModifyCmd.Flags().String("backup-dir", "", "Backup file path")
 	queryCmd.AddCommand(queryModifyCmd)
 }
