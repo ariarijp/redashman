@@ -16,7 +16,7 @@ import (
 
 var queryModifyCmd = &cobra.Command{
 	Use:   "modify [id]",
-	Short: "Modify a query",
+	Short: "Modify a query with text from STDIN",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl := getUrlFlag()

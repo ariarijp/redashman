@@ -13,7 +13,7 @@ import (
 
 var queryCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new query",
+	Short: "Create a new query with text from STDIN",
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl := getUrlFlag()
 		apiKey := getApiKeyFlag()
