@@ -19,9 +19,7 @@ var queryModifyCmd = &cobra.Command{
 	Short: "Modify a query with text from STDIN",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		redashUrl, err := getUrlFlag()
-		checkError(err)
-		apiKey, err := getApiKeyFlag()
+		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
 		backupDir, err := cmd.Flags().GetString("backup-dir")
 		checkError(err)
@@ -32,8 +30,7 @@ var queryModifyCmd = &cobra.Command{
 		id, err := strconv.Atoi(args[0])
 		checkError(err)
 
-		queryStrings := url.Values{}
-		queryStrings.Set("api_key", *apiKey)
+		queryStrings := getDefaultQueryStrings(*apiKey)
 
 		if backupDir != "" {
 			err = makeBackupFile(*redashUrl, id, queryStrings, backupDir)

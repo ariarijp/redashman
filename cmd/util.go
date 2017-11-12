@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/bitly/go-simplejson"
@@ -25,6 +26,26 @@ func getApiKeyFlag() (*string, error) {
 
 	apiKey := string(flag)
 	return &apiKey, nil
+}
+
+func getRequiredFlags() (*string, *string, error) {
+	redashUrl, err := getUrlFlag()
+	if err != nil {
+		return nil, nil, err
+	}
+	apiKey, err := getApiKeyFlag()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return redashUrl, apiKey, nil
+}
+
+func getDefaultQueryStrings(apiKey string) url.Values {
+	queryStrings := url.Values{}
+	queryStrings.Set("api_key", apiKey)
+
+	return queryStrings
 }
 
 func getQueryFromResponseBody(body string) (*string, error) {

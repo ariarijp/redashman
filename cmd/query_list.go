@@ -3,7 +3,6 @@ package cmd
 import (
 	encjson "encoding/json"
 	"fmt"
-	"net/url"
 
 	"github.com/ariarijp/redashman/redash"
 	"github.com/bitly/go-simplejson"
@@ -15,14 +14,11 @@ var queryListCmd = &cobra.Command{
 	Short: "List queries",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		redashUrl, err := getUrlFlag()
-		checkError(err)
-		apiKey, err := getApiKeyFlag()
+		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
 		pageSize := args[0]
 
-		queryStrings := url.Values{}
-		queryStrings.Set("api_key", *apiKey)
+		queryStrings := getDefaultQueryStrings(*apiKey)
 		queryStrings.Set("page_size", pageSize)
 
 		res, err := redash.GetQueries(*redashUrl, queryStrings)

@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"net/url"
 	"os"
 
 	"github.com/ariarijp/redashman/redash"
@@ -15,16 +14,13 @@ var queryCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new query with text from STDIN",
 	Run: func(cmd *cobra.Command, args []string) {
-		redashUrl, err := getUrlFlag()
-		checkError(err)
-		apiKey, err := getApiKeyFlag()
+		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
 
 		query, err := ioutil.ReadAll(os.Stdin)
 		checkError(err)
 
-		queryStrings := url.Values{}
-		queryStrings.Set("api_key", *apiKey)
+		queryStrings := getDefaultQueryStrings(*apiKey)
 
 		json := simplejson.New()
 		json.Set("query", string(query))
