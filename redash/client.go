@@ -67,3 +67,11 @@ func ArchiveQuery(redashUrl string, id int, queryStrings url.Values) (*goreq.Res
 		QueryString: queryStrings,
 	}.Do()
 }
+
+func GetTasks(redashUrl string, queryStrings url.Values) (*goreq.Response, error) {
+	return goreq.Request{
+		Method:      "GET",
+		Uri:         fmt.Sprintf("%s/api/admin/queries/tasks", redashUrl),
+		QueryString: queryStrings,
+	}.Do()
+}
