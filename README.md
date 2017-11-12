@@ -1,7 +1,6 @@
 # redashman
 
-Command line interface for Facebook Marketing API.
-
+`redashman` is a query management tool for Redash
 
 ## License
 
