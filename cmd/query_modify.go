@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ariarijp/redashman/redash"
 	"github.com/bitly/go-simplejson"
-	"github.com/franela/goreq"
 	"github.com/spf13/cobra"
 )
 
@@ -27,9 +27,6 @@ var queryModifyCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		values := url.Values{}
-		values.Set("api_key", apiKey)
-
 		query, err := ioutil.ReadAll(os.Stdin)
 		if err != nil {
 			fmt.Println(err)
@@ -42,25 +39,17 @@ var queryModifyCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		queryStrings := url.Values{}
+		queryStrings.Set("api_key", apiKey)
+
 		if backupDir != "" {
-			makeBackupFile(redashUrl, id, values, backupDir)
+			makeBackupFile(redashUrl, id, queryStrings, backupDir)
 		}
 
-		js := simplejson.New()
-		js.Set("query", string(query))
+		json := simplejson.New()
+		json.Set("query", string(query))
 
-		body, err := js.Encode()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		res, err := goreq.Request{
-			Method:      "POST",
-			Uri:         fmt.Sprintf("%s/api/queries/%d", redashUrl, id),
-			QueryString: values,
-			Body:        body,
-		}.Do()
+		res, err := redash.ModifyQuery(redashUrl, id, queryStrings, json)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -70,12 +59,8 @@ var queryModifyCmd = &cobra.Command{
 	},
 }
 
-func makeBackupFile(redashUrl string, id int, values url.Values, backupDir string) {
-	res, err := goreq.Request{
-		Method:      "GET",
-		Uri:         fmt.Sprintf("%s/api/queries/%d", redashUrl, id),
-		QueryString: values,
-	}.Do()
+func makeBackupFile(redashUrl string, id int, queryStrings url.Values, backupDir string) {
+	res, err := redash.GetQuery(redashUrl, id, queryStrings)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

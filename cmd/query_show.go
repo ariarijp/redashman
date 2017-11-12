@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/franela/goreq"
+	"github.com/ariarijp/redashman/redash"
 	"github.com/spf13/cobra"
 )
 
@@ -19,20 +19,20 @@ var queryShowCmd = &cobra.Command{
 		redashUrl := getUrlFlag()
 		apiKey := getApiKeyFlag()
 
-		values := url.Values{}
-		values.Set("api_key", apiKey)
-
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		res, err := goreq.Request{
-			Method:      "GET",
-			Uri:         fmt.Sprintf("%s/api/queries/%d", redashUrl, id),
-			QueryString: values,
-		}.Do()
+		queryStrings := url.Values{}
+		queryStrings.Set("api_key", apiKey)
+
+		res, err := redash.GetQuery(redashUrl, id, queryStrings)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
 		body, err := res.Body.ToString()
 		if err != nil {

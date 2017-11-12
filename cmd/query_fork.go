@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/franela/goreq"
+	"github.com/ariarijp/redashman/redash"
 	"github.com/spf13/cobra"
 )
 
@@ -18,20 +18,16 @@ var queryForkCmd = &cobra.Command{
 		redashUrl := getUrlFlag()
 		apiKey := getApiKeyFlag()
 
-		values := url.Values{}
-		values.Set("api_key", apiKey)
-
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		res, err := goreq.Request{
-			Method:      "POST",
-			Uri:         fmt.Sprintf("%s/api/queries/%d/fork", redashUrl, id),
-			QueryString: values,
-		}.Do()
+		queryStrings := url.Values{}
+		queryStrings.Set("api_key", apiKey)
+
+		res, err := redash.ForkQuery(redashUrl, id, queryStrings)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

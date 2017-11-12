@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/franela/goreq"
+	"github.com/ariarijp/redashman/redash"
 	"github.com/spf13/cobra"
 )
 
@@ -17,19 +17,15 @@ var queryArchiveCmd = &cobra.Command{
 		redashUrl := getUrlFlag()
 		apiKey := getApiKeyFlag()
 
-		values := url.Values{}
-		values.Set("api_key", apiKey)
-
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
 			panic(err)
 		}
 
-		res, err := goreq.Request{
-			Method:      "DELETE",
-			Uri:         fmt.Sprintf("%s/api/queries/%d", redashUrl, id),
-			QueryString: values,
-		}.Do()
+		queryStrings := url.Values{}
+		queryStrings.Set("api_key", apiKey)
+
+		res, err := redash.ArchiveQuery(redashUrl, id, queryStrings)
 		if err != nil {
 			panic(err)
 		}

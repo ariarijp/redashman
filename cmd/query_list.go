@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"encoding/json"
+	encjson "encoding/json"
 	"fmt"
 	"net/url"
 	"os"
 
+	"github.com/ariarijp/redashman/redash"
 	"github.com/bitly/go-simplejson"
-	"github.com/franela/goreq"
 	"github.com/spf13/cobra"
 )
 
@@ -20,15 +20,11 @@ var queryListCmd = &cobra.Command{
 		apiKey := getApiKeyFlag()
 		pageSize := args[0]
 
-		values := url.Values{}
-		values.Set("api_key", apiKey)
-		values.Set("page_size", pageSize)
+		queryStrings := url.Values{}
+		queryStrings.Set("api_key", apiKey)
+		queryStrings.Set("page_size", pageSize)
 
-		res, err := goreq.Request{
-			Method:      "GET",
-			Uri:         fmt.Sprintf("%s/api/queries", redashUrl),
-			QueryString: values,
-		}.Do()
+		res, err := redash.GetQueries(redashUrl, queryStrings)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -50,17 +46,17 @@ var queryListCmd = &cobra.Command{
 			return
 		}
 
-		js, err := simplejson.NewJson([]byte(body))
+		json, err := simplejson.NewJson([]byte(body))
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		for _, query := range js.Get("results").MustArray() {
+		for _, query := range json.Get("results").MustArray() {
 			q := query.(map[string]interface{})
 			queryUrl := fmt.Sprintf("%s/queries/%s", redashUrl, q["id"])
 			fmt.Printf("%s\t%s\t%s\n",
-				q["id"].(json.Number).String(),
+				q["id"].(encjson.Number).String(),
 				q["name"].(string),
 				queryUrl,
 			)
