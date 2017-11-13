@@ -18,6 +18,7 @@ var adminTasksCmd = &cobra.Command{
 
 		res, err := redash.GetTasks(*redashUrl, queryStrings)
 		checkError(err)
+		checkStatusCode(res)
 
 		body, err := res.Body.ToString()
 		checkError(err)

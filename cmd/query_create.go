@@ -29,6 +29,7 @@ var queryCreateCmd = &cobra.Command{
 
 		res, err := redash.CreateQuery(*redashUrl, queryStrings, json)
 		checkError(err)
+		checkStatusCode(res)
 
 		fmt.Println(res.Status)
 	},

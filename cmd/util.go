@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/bitly/go-simplejson"
+	"github.com/franela/goreq"
 )
 
 func getUrlFlag() (*string, error) {
@@ -63,6 +64,13 @@ func getQueryFromResponseBody(body string) (*string, error) {
 func checkError(err error) {
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+func checkStatusCode(res *goreq.Response) {
+	if res.StatusCode != 200 {
+		println(res.Status)
 		os.Exit(1)
 	}
 }

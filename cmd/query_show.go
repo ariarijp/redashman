@@ -24,6 +24,7 @@ var queryShowCmd = &cobra.Command{
 
 		res, err := redash.GetQuery(*redashUrl, id, queryStrings)
 		checkError(err)
+		checkStatusCode(res)
 
 		body, err := res.Body.ToString()
 		checkError(err)

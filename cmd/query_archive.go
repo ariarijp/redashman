@@ -23,6 +23,7 @@ var queryArchiveCmd = &cobra.Command{
 
 		res, err := redash.ArchiveQuery(*redashUrl, id, queryStrings)
 		checkError(err)
+		checkStatusCode(res)
 
 		fmt.Println(res.Status)
 	},

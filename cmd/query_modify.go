@@ -42,6 +42,7 @@ var queryModifyCmd = &cobra.Command{
 
 		res, err := redash.ModifyQuery(*redashUrl, id, queryStrings, json)
 		checkError(err)
+		checkStatusCode(res)
 
 		fmt.Println(res.Status)
 	},

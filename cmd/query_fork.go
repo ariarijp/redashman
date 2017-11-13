@@ -23,6 +23,7 @@ var queryForkCmd = &cobra.Command{
 
 		res, err := redash.ForkQuery(*redashUrl, id, queryStrings)
 		checkError(err)
+		checkStatusCode(res)
 
 		fmt.Println(res.Status)
 	},
