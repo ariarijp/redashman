@@ -10,16 +10,18 @@ import (
 )
 
 var queryListCmd = &cobra.Command{
-	Use:   "list [page_size]",
+	Use:   "list [page_size] [page]",
 	Short: "List queries",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
 		pageSize := args[0]
+		page := args[1]
 
 		queryStrings := getDefaultQueryStrings(*apiKey)
 		queryStrings.Set("page_size", pageSize)
+		queryStrings.Set("page", page)
 
 		res, err := redash.GetQueries(*redashUrl, queryStrings)
 		checkError(err)
