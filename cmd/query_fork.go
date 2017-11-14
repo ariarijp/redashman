@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
+	"github.com/Songmu/prompter"
 	"github.com/ariarijp/redashman/redash"
 	"github.com/spf13/cobra"
 )
@@ -20,6 +22,10 @@ var queryForkCmd = &cobra.Command{
 		checkError(err)
 
 		queryStrings := getDefaultQueryStrings(*apiKey)
+
+		if !prompter.YN("Are you sure you want to fork this query?", false) {
+			os.Exit(1)
+		}
 
 		res, err := redash.ForkQuery(*redashUrl, id, queryStrings)
 		checkError(err)

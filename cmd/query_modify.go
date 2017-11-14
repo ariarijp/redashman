@@ -9,26 +9,33 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Songmu/prompter"
 	"github.com/ariarijp/redashman/redash"
 	"github.com/bitly/go-simplejson"
 	"github.com/spf13/cobra"
 )
 
 var queryModifyCmd = &cobra.Command{
-	Use:   "modify [id]",
-	Short: "Modify a query with text from STDIN",
-	Args:  cobra.ExactArgs(1),
+	Use:   "modify [id] [file]",
+	Short: "Modify a query with text from file",
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
 		backupDir, err := cmd.Flags().GetString("backup-dir")
 		checkError(err)
 
-		query, err := ioutil.ReadAll(os.Stdin)
-		checkError(err)
-
 		id, err := strconv.Atoi(args[0])
 		checkError(err)
+
+		inputFilePath := args[1]
+		checkError(err)
+		query, err := ioutil.ReadFile(inputFilePath)
+		checkError(err)
+
+		if !prompter.YN("Are you sure you want to modify this query?", false) {
+			os.Exit(1)
+		}
 
 		queryStrings := getDefaultQueryStrings(*apiKey)
 

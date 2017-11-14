@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 	"strconv"
+	"os"
 
+	"github.com/Songmu/prompter"
 	"github.com/ariarijp/redashman/redash"
 	"github.com/spf13/cobra"
 )
@@ -20,6 +22,10 @@ var queryArchiveCmd = &cobra.Command{
 		checkError(err)
 
 		queryStrings := getDefaultQueryStrings(*apiKey)
+
+		if !prompter.YN("Are you sure you want to archive this query?", false) {
+			os.Exit(1)
+		}
 
 		res, err := redash.ArchiveQuery(*redashUrl, id, queryStrings)
 		checkError(err)

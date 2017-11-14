@@ -5,20 +5,28 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/Songmu/prompter"
 	"github.com/ariarijp/redashman/redash"
 	"github.com/bitly/go-simplejson"
 	"github.com/spf13/cobra"
 )
 
 var queryCreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new query with text from STDIN",
+	Use:   "create [file]",
+	Short: "Create a new query with text from file",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
 
-		query, err := ioutil.ReadAll(os.Stdin)
+		inputFilePath := args[0]
 		checkError(err)
+		query, err := ioutil.ReadFile(inputFilePath)
+		checkError(err)
+
+		if !prompter.YN("Are you sure you want to create a new query?", false) {
+			os.Exit(1)
+		}
 
 		queryStrings := getDefaultQueryStrings(*apiKey)
 
