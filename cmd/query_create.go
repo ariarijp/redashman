@@ -13,7 +13,7 @@ import (
 
 var queryCreateCmd = &cobra.Command{
 	Use:   "create [file]",
-	Short: "Create a new query with text from file",
+	Short: "Create a new query with text from a file",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl, apiKey, err := getRequiredFlags()

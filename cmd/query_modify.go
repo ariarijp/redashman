@@ -17,7 +17,7 @@ import (
 
 var queryModifyCmd = &cobra.Command{
 	Use:   "modify [id] [file]",
-	Short: "Modify a query with text from file",
+	Short: "Modify a query with text from a file",
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl, apiKey, err := getRequiredFlags()
