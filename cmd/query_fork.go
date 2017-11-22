@@ -17,13 +17,14 @@ var queryForkCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
+		force, _ := cmd.Flags().GetBool("force")
 
 		id, err := strconv.Atoi(args[0])
 		checkError(err)
 
 		queryStrings := getDefaultQueryStrings(*apiKey)
 
-		if !prompter.YN("Are you sure you want to fork this query?", false) {
+		if !force && !prompter.YN("Are you sure you want to fork this query?", false) {
 			os.Exit(1)
 		}
 
@@ -36,5 +37,6 @@ var queryForkCmd = &cobra.Command{
 }
 
 func init() {
+	queryForkCmd.Flags().BoolP("force", "f", false, "Run without asking")
 	queryCmd.AddCommand(queryForkCmd)
 }

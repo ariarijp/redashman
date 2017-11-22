@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"strconv"
 	"os"
+	"strconv"
 
 	"github.com/Songmu/prompter"
 	"github.com/ariarijp/redashman/redash"
@@ -17,13 +17,14 @@ var queryArchiveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
+		force, _ := cmd.Flags().GetBool("force")
 
 		id, err := strconv.Atoi(args[0])
 		checkError(err)
 
 		queryStrings := getDefaultQueryStrings(*apiKey)
 
-		if !prompter.YN("Are you sure you want to archive this query?", false) {
+		if !force && !prompter.YN("Are you sure you want to archive this query?", false) {
 			os.Exit(1)
 		}
 
@@ -36,5 +37,6 @@ var queryArchiveCmd = &cobra.Command{
 }
 
 func init() {
+	queryArchiveCmd.Flags().BoolP("force", "f", false, "Run without asking")
 	queryCmd.AddCommand(queryArchiveCmd)
 }

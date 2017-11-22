@@ -18,13 +18,14 @@ var queryCreateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		redashUrl, apiKey, err := getRequiredFlags()
 		checkError(err)
+		force, _ := cmd.Flags().GetBool("force")
 
 		inputFilePath := args[0]
 		checkError(err)
 		query, err := ioutil.ReadFile(inputFilePath)
 		checkError(err)
 
-		if !prompter.YN("Are you sure you want to create a new query?", false) {
+		if !force && !prompter.YN("Are you sure you want to create a new query?", false) {
 			os.Exit(1)
 		}
 
@@ -44,5 +45,6 @@ var queryCreateCmd = &cobra.Command{
 }
 
 func init() {
+	queryCreateCmd.Flags().BoolP("force", "f", false, "Run without asking")
 	queryCmd.AddCommand(queryCreateCmd)
 }

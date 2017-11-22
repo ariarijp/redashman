@@ -24,6 +24,7 @@ var queryModifyCmd = &cobra.Command{
 		checkError(err)
 		backupDir, err := cmd.Flags().GetString("backup-dir")
 		checkError(err)
+		force, _ := cmd.Flags().GetBool("force")
 
 		id, err := strconv.Atoi(args[0])
 		checkError(err)
@@ -33,7 +34,7 @@ var queryModifyCmd = &cobra.Command{
 		query, err := ioutil.ReadFile(inputFilePath)
 		checkError(err)
 
-		if !prompter.YN("Are you sure you want to modify this query?", false) {
+		if !force && !prompter.YN("Are you sure you want to modify this query?", false) {
 			os.Exit(1)
 		}
 
@@ -84,6 +85,7 @@ func makeBackupFile(redashUrl string, id int, queryStrings url.Values, backupDir
 }
 
 func init() {
+	queryModifyCmd.Flags().BoolP("force", "f", false, "Run without asking")
 	queryModifyCmd.Flags().String("backup-dir", "", "Backup file path")
 	queryCmd.AddCommand(queryModifyCmd)
 }
