@@ -15,7 +15,7 @@ $ export REDASH_URL=http://localhost:5000
 $ export REDASH_API_KEY=YOUR_API_KEY
 $ 
 $ # List queries
-$ redashman query list 100 --url $REDASH_URL --api-key $REDASH_API_KEY
+$ redashman query list 100 1 --url $REDASH_URL --api-key $REDASH_API_KEY
 $ 
 $ # Show a query
 $ redashman query show 1 --url $REDASH_URL --api-key $REDASH_API_KEY
