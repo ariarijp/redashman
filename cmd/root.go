@@ -24,7 +24,7 @@ func Execute() {
 }
 
 func init() {
-	RootCmd.PersistentFlags().String("api-key", "", "Redash user API key")
+	RootCmd.PersistentFlags().String("api-key", "", "Redash User API Key")
 	RootCmd.PersistentFlags().String("url", "", "Redash URL e.g. http://localhost")
 	RootCmd.PersistentFlags().Uint("timeout", 1000, "Set connection timeout in milliseconds")
 	RootCmd.MarkPersistentFlagRequired("api-key")
