@@ -8,7 +8,7 @@ import subprocess
 REDASH_API_KEY = os.environ.get('REDASH_API_KEY')
 REDASH_URL = os.environ.get('REDASH_URL')
 BACKUP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backup')
-PAGE_SIZE = 1
+PAGE_SIZE = 50
 
 page = 1
 
